@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: #c0392b;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+    align-items: center;
+}
+
+.navbar nav a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.navbar nav a:hover {
+    text-decoration: underline;
+}
+
+/* ===== HERO ===== */
+.hero {
+    background: linear-gradient(rgba(192,57,43,0.8), rgba(192,57,43,0.8)),
+    url('https://images.unsplash.com/photo-1581594693702-fbdc51b2763b') center/cover;
+    color: white;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    margin-bottom: 25px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.primary {
+    background: white;
+    color: #c0392b;
+}
+
+.secondary {
+    background: black;
+    color: white;
+}
+
+/* ===== SECTIONS ===== */
+section {
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.about p {
+    max-width: 700px;
+    margin: auto;
+}
+
+/* Cards */
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #f4f4f4;
+    padding: 25px;
+    width: 250px;
+    border-radius: 10px;
+}
+
+/* Steps */
+.step-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.step {
+    background: #c0392b;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 30px;
+}
+
+/* Stats */
+.stats {
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.stat-box h3 {
+    font-size: 32px;
+}
+
+/* Footer */
+.footer {
+    background: #111;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-bottom {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+}

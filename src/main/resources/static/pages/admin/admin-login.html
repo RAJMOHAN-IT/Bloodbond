@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login - BloodBond</title>
+    <!-- ✅ FIXED: was ../../asessts/ -->
+    <link rel="stylesheet" href="/assets/css/auth.css">
+</head>
+<body>
+
+<div class="center-container">
+
+    <div class="login-box">
+        <h1 class="brand">BloodBond 🩸</h1>
+        <h2>Admin Login</h2>
+
+        <!-- ✅ FIXED: connected to loginUser() from auth.js -->
+        <form onsubmit="loginUser(event)">
+
+            <div class="input-group">
+                <label>Admin Username</label>
+                <input type="text" id="username" placeholder="Enter admin username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+
+        </form>
+
+        <p class="extra-links">
+            <a href="/index.html">← Back to Home</a>
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ✅ FIXED: JS connected -->
+<script src="/assets/js/auth.js"></script>
+
+</body>
+</html>

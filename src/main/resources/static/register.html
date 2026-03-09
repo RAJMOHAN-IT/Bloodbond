@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - BloodBond</title>
+    <link rel="stylesheet" href="/assets/css/auth.css">
+</head>
+<body>
+<div class="center-container">
+    <div class="login-box">
+        <h1 class="brand">BloodBond 🩸</h1>
+        <h2>Create New Account</h2>
+        <form onsubmit="registerUser(event)">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="username" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Create password" required>
+            </div>
+            <div class="input-group">
+                <label>Select Role</label>
+                <select id="role" required>
+                    <option value="">-- Choose Role --</option>
+                    <option value="DONOR">Donor</option>
+                    <option value="HOSPITAL">Hospital</option>
+                </select>
+            </div>
+            <button type="submit" class="login-btn">Register</button>
+        </form>
+        <p class="extra-links">Already have an account? <a href="/login.html">Login</a></p>
+    </div>
+</div>
+<script src="/assets/js/auth.js"></script>
+</body>
+</html>

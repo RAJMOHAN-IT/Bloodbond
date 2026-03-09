@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Donors - BloodBond</title>
+    <link rel="stylesheet" href="/assets/css/hospital.css">
+    <style>
+        .request-btn {
+            padding: 6px 14px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .request-btn:hover { background-color: #219150; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 380px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-box h3 { color: #c0392b; margin-bottom: 15px; }
+        .modal-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .modal-actions button {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .confirm-btn { background: #27ae60; color: white; }
+        .cancel-btn  { background: #eee; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Search Blood Donors 🔍</h1>
+
+    <div class="search-box">
+        <select id="searchBloodGroup">
+            <option value="">Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+
+        <input type="text" id="searchCity" placeholder="Enter City">
+        <button onclick="searchDonors()">Search</button>
+    </div>
+
+    <table id="donorTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="donorBody">
+            <tr>
+                <td colspan="5" style="text-align:center;">Click Search to find donors</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="center">
+        <a href="/pages/hospital/dashboard.html" class="btn">← Back to Dashboard</a>
+    </div>
+</div>
+
+<!-- ✅ Request Modal — asks for hospital phone -->
+<div class="modal-overlay" id="requestModal">
+    <div class="modal-box">
+        <h3>🩸 Send Blood Request</h3>
+        <p style="margin-bottom:12px; color:#555; font-size:14px;">
+            Donor: <b id="modalDonorName"></b> &nbsp;|&nbsp; Blood Group: <b id="modalBloodGroup"></b>
+        </p>
+        <input type="text" id="modalHospitalName" placeholder="Hospital Name *">
+        <input type="text" id="modalHospitalPhone" placeholder="Contact Phone Number *">
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            <button class="confirm-btn" onclick="confirmRequest()">Send Request</button>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/js/auth.js"></script>
+<script>
+    let selectedDonor = null;
+
+    async function searchDonors() {
+        const bloodGroup = document.getElementById("searchBloodGroup").value;
+        const city = document.getElementById("searchCity").value.trim();
+        const token = localStorage.getItem("token");
+
+        const params = new URLSearchParams();
+        if (bloodGroup) params.append("bloodGroup", bloodGroup);
+        if (city)       params.append("city", city);
+        params.append("page", "0");
+        params.append("size", "10");
+        params.append("sortBy", "id");
+
+        const response = await fetch("/api/donors/filter?" + params.toString(), {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        const data = await response.json();
+        const donors = data.content || [];
+        const tbody = document.getElementById("donorBody");
+
+        if (donors.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">No donors found</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        donors.forEach(donor => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${donor.name || "-"}</td>
+                    <td>${donor.bloodGroup || "-"}</td>
+                    <td>${donor.age || "-"}</td>
+                    <td>${donor.city || "-"}</td>
+                    <td>
+                        <button class="request-btn"
+                            onclick="openModal(${donor.id}, '${donor.name}', '${donor.bloodGroup}', '${donor.city}')">
+                            Request
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function openModal(donorId, donorName, bloodGroup, city) {
+        selectedDonor = { donorId, donorName, bloodGroup, city };
+        document.getElementById("modalDonorName").innerText = donorName;
+        document.getElementById("modalBloodGroup").innerText = bloodGroup;
+        document.getElementById("requestModal").classList.add("active");
+    }
+
+    function closeModal() {
+        selectedDonor = null;
+        document.getElementById("modalHospitalName").value = "";
+        document.getElementById("modalHospitalPhone").value = "";
+        document.getElementById("requestModal").classList.remove("active");
+    }
+
+    async function confirmRequest() {
+        const hospitalName  = document.getElementById("modalHospitalName").value.trim();
+        const hospitalPhone = document.getElementById("modalHospitalPhone").value.trim();
+
+        if (!hospitalName || !hospitalPhone) {
+            alert("Please fill in Hospital Name and Phone Number!");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+
+        const requestBody = {
+            donorId:       selectedDonor.donorId,
+            donorName:     selectedDonor.donorName,
+            bloodGroup:    selectedDonor.bloodGroup,
+            hospitalName:  hospitalName,
+            hospitalCity:  selectedDonor.city,
+            hospitalPhone: hospitalPhone
+        };
+
+        const response = await fetch("/api/blood-requests", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (response.ok) {
+            closeModal();
+            alert("✅ Request sent! Admin will review it.");
+        } else {
+            alert("❌ Failed to send request. Please try again.");
+        }
+    }
+</script>
+
+</body>
+</html>

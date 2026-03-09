@@ -1,0 +1,83 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+}
+
+/* Main Container */
+.admin-container {
+    width: 85%;
+    margin: 40px auto;
+}
+
+/* Page Title */
+.admin-container h1 {
+    text-align: center;
+    color: #c0392b;
+    margin-bottom: 40px;
+}
+
+/* Dashboard Cards Section */
+.admin-cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Individual Card */
+.card {
+    flex: 1;
+    min-width: 220px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Card Title */
+.card h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Card Number */
+.card p {
+    font-size: 30px;
+    font-weight: bold;
+    color: #c0392b;
+}
+
+/* Button Section */
+.center {
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Logout Button */
+.btn {
+    text-decoration: none;
+    background-color: #c0392b;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #a93226;
+}

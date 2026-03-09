@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Requests - BloodBond</title>
+    <!-- ✅ FIXED: was ../../asessts/ -->
+    <link rel="stylesheet" href="/assets/css/hospital.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h1>Incoming Blood Requests 🩸</h1>
+
+    <table class="request-table" id="requestTable">
+        <tr>
+            <th>Patient Name</th>
+            <th>Blood Group</th>
+            <th>Hospital</th>
+            <th>Required Date</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:center;">Loading requests...</td>
+        </tr>
+    </table>
+
+    <div style="text-align:center; margin-top:30px;">
+        <a href="/pages/hospital/dashboard.html" class="btn">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+<!-- ✅ FIXED: JS connected, load real data -->
+<script src="/assets/js/auth.js"></script>
+<script>
+    async function loadRequests() {
+        const response = await authorizedFetch("/api/donors/filter");
+        if (!response) return;
+
+        const data = await response.json();
+        const donors = data.content || [];
+
+        const table = document.getElementById("requestTable");
+        table.innerHTML = `
+            <tr>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Age</th>
+                <th>Status</th>
+            </tr>
+        `;
+
+        if (donors.length === 0) {
+            table.innerHTML += `<tr><td colspan="4" style="text-align:center;">No requests found</td></tr>`;
+            return;
+        }
+
+        donors.forEach(donor => {
+            table.innerHTML += `
+                <tr>
+                    <td>${donor.name}</td>
+                    <td>${donor.bloodGroup}</td>
+                    <td>${donor.age}</td>
+                    <td>Pending</td>
+                </tr>
+            `;
+        });
+    }
+
+    window.onload = loadRequests;
+</script>
+
+</body>
+</html>

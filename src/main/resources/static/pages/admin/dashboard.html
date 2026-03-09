@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - BloodBond</title>
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <style>
+        .requests-section { margin-top: 40px; }
+        .requests-section h2 { color: #c0392b; margin-bottom: 15px; }
+        .status-pending  { color: orange; font-weight: bold; }
+        .status-approved { color: green;  font-weight: bold; }
+        .status-rejected { color: red;    font-weight: bold; }
+        .approve-btn {
+            padding: 6px 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .reject-btn {
+            padding: 6px 12px;
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .approve-btn:hover { background-color: #219150; }
+        .reject-btn:hover  { background-color: #a93226; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        th {
+            background-color: #c0392b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+
+<body onload="loadAdminDashboard()">
+
+<div class="admin-container">
+    <h1>Admin Dashboard 👑</h1>
+
+    <!-- Live status from backend -->
+    <div id="adminContent" style="margin-bottom:20px; color:green; font-weight:bold;"></div>
+
+    <div class="admin-cards">
+
+        <div class="card">
+            <h2>Total Donors</h2>
+            <p id="totalDonors">-</p>
+        </div>
+
+        <div class="card">
+            <h2>Total Hospitals</h2>
+            <p id="totalHospitals">-</p>
+        </div>
+
+        <div class="card">
+            <h2>Total Requests</h2>
+            <p id="totalRequests">-</p>
+        </div>
+
+    </div>
+
+    <!-- ✅ NEW: Pending Blood Requests Section -->
+    <div class="requests-section">
+        <h2>🩸 Pending Blood Requests</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Hospital Name</th>
+                    <th>Hospital City</th>
+                    <th>Donor Name</th>
+                    <th>Blood Group</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="requestsBody">
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:20px; color:#999;">
+                        Loading requests...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="center" style="margin-top:30px;">
+        <a href="#" onclick="logout()" class="btn">Logout</a>
+    </div>
+</div>
+
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/admin.js"></script>
+<script>
+
+    // Load pending requests on page load
+    async function loadPendingRequests() {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("/api/blood-requests/pending", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        const requests = await response.json();
+        const tbody = document.getElementById("requestsBody");
+
+        if (requests.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#999;">No pending requests</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        requests.forEach(req => {
+            const date = new Date(req.createdAt).toLocaleDateString("en-IN");
+            tbody.innerHTML += `
+                <tr id="row-${req.id}">
+                    <td>${req.hospitalName || "-"}</td>
+                    <td>${req.hospitalCity || "-"}</td>
+                    <td>${req.donorName || "-"}</td>
+                    <td>${req.bloodGroup || "-"}</td>
+                    <td>${date}</td>
+                    <td class="status-pending">PENDING</td>
+                    <td>
+                        <button class="approve-btn" onclick="approveRequest(${req.id})">✅ Approve</button>
+                        <button class="reject-btn"  onclick="rejectRequest(${req.id})">❌ Reject</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Update total requests card
+        document.getElementById("totalRequests").innerText = requests.length;
+    }
+
+    async function approveRequest(id) {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("/api/blood-requests/" + id + "/approve", {
+            method: "PUT",
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (response.ok) {
+            const row = document.getElementById("row-" + id);
+            row.querySelector("td:nth-child(6)").className = "status-approved";
+            row.querySelector("td:nth-child(6)").innerText = "APPROVED";
+            row.querySelector("td:nth-child(7)").innerHTML = "<span style='color:green;'>✅ Approved</span>";
+            alert("Request approved! Donor will be notified.");
+        } else {
+            alert("Failed to approve. Please try again.");
+        }
+    }
+
+    async function rejectRequest(id) {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("/api/blood-requests/" + id + "/reject", {
+            method: "PUT",
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (response.ok) {
+            const row = document.getElementById("row-" + id);
+            row.querySelector("td:nth-child(6)").className = "status-rejected";
+            row.querySelector("td:nth-child(6)").innerText = "REJECTED";
+            row.querySelector("td:nth-child(7)").innerHTML = "<span style='color:red;'>❌ Rejected</span>";
+            alert("Request rejected.");
+        } else {
+            alert("Failed to reject. Please try again.");
+        }
+    }
+
+    // Call loadPendingRequests when page loads
+    window.onload = function() {
+        loadAdminDashboard();
+        loadPendingRequests();
+    };
+
+</script>
+
+</body>
+</html>

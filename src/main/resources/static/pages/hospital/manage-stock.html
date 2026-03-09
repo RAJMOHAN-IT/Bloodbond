@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Blood Stock - BloodBond</title>
+    <!-- ✅ FIXED: was ../../asessts/ -->
+    <link rel="stylesheet" href="/assets/css/hospital.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Manage Blood Stock 🩸</h1>
+
+    <form class="stock-form" onsubmit="updateStock(event)">
+        <select id="stockBloodGroup" required>
+            <option value="">Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+
+        <input type="number" id="stockUnits" placeholder="Units Available" required>
+        <button type="submit">Update Stock</button>
+    </form>
+
+    <table id="stockTable">
+        <tr>
+            <th>Blood Group</th>
+            <th>Units Available</th>
+        </tr>
+        <tr>
+            <td>O+</td>
+            <td>10 Units</td>
+        </tr>
+        <tr>
+            <td>A+</td>
+            <td>5 Units</td>
+        </tr>
+    </table>
+
+    <div class="center">
+        <a href="/pages/hospital/dashboard.html" class="btn">← Back to Dashboard</a>
+    </div>
+</div>
+
+<!-- ✅ FIXED: JS connected -->
+<script src="/assets/js/auth.js"></script>
+<script>
+    function updateStock(event) {
+        event.preventDefault();
+        // Future: connect to /api/hospitals stock endpoint
+        alert("Stock updated! (Backend endpoint coming soon)");
+    }
+</script>
+
+</body>
+</html>

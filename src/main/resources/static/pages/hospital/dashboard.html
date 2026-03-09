@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Dashboard - BloodBond</title>
+    <!-- ✅ FIXED: was ../../ase/css/ -->
+    <link rel="stylesheet" href="/assets/css/hospital-dashboard.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>BloodBond 🏥</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+            <li><a href="/pages/hospital/view-requests.html">View Requests</a></li>
+            <li><a href="/pages/hospital/search-donors.html">Search Donors</a></li>
+            <li><a href="/pages/hospital/manage-stock.html">Manage Stock</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Welcome, Hospital 🏥</h1>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total Requests</h3>
+                <p id="totalRequests">12</p>
+            </div>
+
+            <div class="card">
+                <h3>Active Requests</h3>
+                <p id="activeRequests">5</p>
+            </div>
+
+            <div class="card">
+                <h3>Available Donors</h3>
+                <p id="availableDonors">34</p>
+            </div>
+
+        </div>
+
+        <div class="info-box">
+            <h2>Quick Info</h2>
+            <p>Manage blood requests, search donors, and update stock from the left panel.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ✅ FIXED: JS connected (logout function comes from auth.js) -->
+<script src="/assets/js/auth.js"></script>
+
+</body>
+</html>
